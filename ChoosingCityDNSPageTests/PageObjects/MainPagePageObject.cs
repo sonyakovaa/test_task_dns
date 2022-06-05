@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace ChoosingCityDNSPageTests.PageObjects
 {
     class MainPagePageObject
     {
-        private IWebDriver _webDriver;
+        private readonly IWebDriver _webDriver;
 
         private readonly By _cityButton = By.CssSelector(".city-select__text");
         private readonly By _choosingCityPage = By.CssSelector(".select-lists");
@@ -19,24 +20,31 @@ namespace ChoosingCityDNSPageTests.PageObjects
             _webDriver = webDriver;
         }
 
-        public ChoosingACityPageObject ChoosingCity()
+        public ChoosingACityPageObject ChoosingCity(IWebDriver webDriver)
         {
-            _webDriver.FindElement(_cityButton).Click();
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_cityButton));
 
-            return new ChoosingACityPageObject(_webDriver);
+            webDriver.FindElement(_cityButton).Click();
+
+            return new ChoosingACityPageObject(webDriver);
         }
 
-        public string GetCity()
+        public string GetCity(IWebDriver webDriver)
         {
-            string nameCity = _webDriver.FindElement(_cityButton).Text;
+            string nameCity = webDriver.FindElement(_cityButton).Text;
             return nameCity;
         }
 
-        public bool CheckingCitySelectionPage()
+        public bool CheckingCitySelectionPage(IWebDriver webDriver)
         {
             try
             {
-                _webDriver.FindElement(_choosingCityPage);
+                WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_cityButton));
+
+                webDriver.FindElement(_choosingCityPage);
+
                 return true;
             }
             catch (NoSuchElementException)

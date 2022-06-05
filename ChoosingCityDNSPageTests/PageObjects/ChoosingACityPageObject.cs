@@ -35,56 +35,56 @@ namespace ChoosingCityDNSPageTests.PageObjects
             _webDriver = webDriver;
         }
 
-        public MainPagePageObject FindCityField(string city)
+        public MainPagePageObject FindCityField(string city, IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
 
-            _webDriver.FindElement(_findCityButton).SendKeys(city);
-            _webDriver.FindElement(_performingCitySearchButton).Click();
+            webDriver.FindElement(_findCityButton).SendKeys(city);
+            webDriver.FindElement(_performingCitySearchButton).Click();
 
-            return new MainPagePageObject(_webDriver);
+            return new MainPagePageObject(webDriver);
         }
 
-        public MainPagePageObject FindCityPressEnter(string city)
+        public MainPagePageObject FindCityPressEnter(string city, IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
-            Actions actions = new Actions(_webDriver);
+            Actions actions = new Actions(webDriver);
 
-            _webDriver.FindElement(_findCityButton).SendKeys(city);
+            webDriver.FindElement(_findCityButton).SendKeys(city);
             actions.KeyDown(Keys.Enter).Build().Perform();
 
-            return new MainPagePageObject(_webDriver);
+            return new MainPagePageObject(webDriver);
         }
 
-        public MainPagePageObject ClearingSearchField(string city)
+        public MainPagePageObject ClearingSearchField(string city, IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
 
-            _webDriver.FindElement(_findCityButton).SendKeys(city);
-            _webDriver.FindElement(_clearFieldButton).Click();
+            webDriver.FindElement(_findCityButton).SendKeys(city);
+            webDriver.FindElement(_clearFieldButton).Click();
 
-            return new MainPagePageObject(_webDriver);
+            return new MainPagePageObject(webDriver);
         }
 
-        public MainPagePageObject ClosingPage()
+        public MainPagePageObject ClosingPage(IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
 
-            _webDriver.FindElement(_closePageButton).Click();
+            webDriver.FindElement(_closePageButton).Click();
 
-            return new MainPagePageObject(_webDriver);
+            return new MainPagePageObject(webDriver);
         }
 
-        public List<String> FindPopularCities()
+        public List<String> FindPopularCities(IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
 
-            List<IWebElement> elementsCollection = _webDriver.FindElements(_listPopularCities).ToList();
+            List<IWebElement> elementsCollection = webDriver.FindElements(_listPopularCities).ToList();
             List<String> elements = new List<String>();
             foreach(IWebElement element in elementsCollection)
             {
