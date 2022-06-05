@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,6 +22,7 @@ namespace ChoosingASityDNSPageTests
             _webDriver = new ChromeDriver();
             _webDriver.Manage().Window.Maximize();
             _webDriver.Navigate().GoToUrl("https://www.dns-shop.ru/");
+            _ = _webDriver.Manage().Timeouts().ImplicitWait;
         }
 
         [Test]
@@ -28,13 +30,12 @@ namespace ChoosingASityDNSPageTests
         {
             string expectedCity = "Новосибирск";
 
-            _ = _webDriver.Manage().Timeouts().ImplicitWait;
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
-                .choosingCity()
-                .findCityField(expectedCity);
+                .ChoosingCity()
+                .FindCityField(expectedCity);
 
-            string actualCity = mainPage.getCity();
+            string actualCity = mainPage.GetCity();
 
             Assert.AreEqual(expectedCity, actualCity);
         }
@@ -44,13 +45,12 @@ namespace ChoosingASityDNSPageTests
         {
             string expectedCity = "Новосибирск";
 
-            _ = _webDriver.Manage().Timeouts().ImplicitWait;
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
-                .choosingCity()
-                .findCityPressEnter(expectedCity);
+                .ChoosingCity()
+                .FindCityPressEnter(expectedCity);
 
-            string actualCity = mainPage.getCity();
+            string actualCity = mainPage.GetCity();
 
             Assert.AreEqual(expectedCity, actualCity);
         }
@@ -60,23 +60,38 @@ namespace ChoosingASityDNSPageTests
         {
             string expectedCity = "Новосибирск";
 
-            _ = _webDriver.Manage().Timeouts().ImplicitWait;
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
-                .choosingCity()
-                .clearingSearchField(expectedCity);
+                .ChoosingCity()
+                .ClearingSearchField(expectedCity);
         }
 
         [Test]
         public void ClosingPageTest()
         {
-            _ = _webDriver.Manage().Timeouts().ImplicitWait;
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
-                .choosingCity()
-                .closingPage();
+                .ChoosingCity()
+                .ClosingPage();
 
-            Assert.IsFalse(mainPage.checkingCitySelectionPage());
+            Assert.IsFalse(mainPage.CheckingCitySelectionPage());
+        }
+
+        [Test]
+        public void ListPopularCitiesTest()
+        {
+            var mainPage = new MainPagePageObject(_webDriver);
+            List<String> actualSities = mainPage
+                .ChoosingCity()
+                .FindPopularCities();
+
+            actualSities.Sort();
+
+            List<String> expectedSities = new List<String>() {"Москва", "Санкт-Петербург", "Новосибирск", 
+                "Екатеринбург", "Нижний Новгород", "Казань", 
+                "Самара", "Владивосток" };
+            expectedSities.Sort();
+            Assert.AreEqual(expectedSities, actualSities);
         }
     }
 }

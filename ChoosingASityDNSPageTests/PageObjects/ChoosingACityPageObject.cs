@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using SeleniumExtras.WaitHelpers;
+using System.Collections.ObjectModel;
 
 namespace ChoosingASityDNSPageTests.PageObjects
 {
@@ -16,7 +17,7 @@ namespace ChoosingASityDNSPageTests.PageObjects
     // div[class="base-modal__header-content"] svg[class="base-modal__header-close-icon dns-icon_remove"]
     class ChoosingACityPageObject
     {
-        private IWebDriver _webDriver;
+        private readonly IWebDriver _webDriver;
 
         private readonly By _findDistrict = By.XPath("//span[text()='Дальневосточный']");
         private readonly By _findCityButton = By.CssSelector(".base-ui-input-search__input");
@@ -27,15 +28,16 @@ namespace ChoosingASityDNSPageTests.PageObjects
             ".base-ui-input-search__clear_grey");
         private readonly By _closePageButton = By.CssSelector("div[class='base-modal__header-content'] " +
             "svg[class='base-modal__header-close-icon dns-icon_remove']");
+        private readonly By _listPopularCities = By.CssSelector(".city-bubble");
 
         public ChoosingACityPageObject(IWebDriver webDriver)
         {
             _webDriver = webDriver;
         }
 
-        public MainPagePageObject findCityField(string city)
+        public MainPagePageObject FindCityField(string city)
         {
-            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(5));
+            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
 
             _webDriver.FindElement(_findCityButton).SendKeys(city);
@@ -44,7 +46,7 @@ namespace ChoosingASityDNSPageTests.PageObjects
             return new MainPagePageObject(_webDriver);
         }
 
-        public MainPagePageObject findCityPressEnter(string city)
+        public MainPagePageObject FindCityPressEnter(string city)
         {
             WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
@@ -56,7 +58,7 @@ namespace ChoosingASityDNSPageTests.PageObjects
             return new MainPagePageObject(_webDriver);
         }
 
-        public MainPagePageObject clearingSearchField(string city)
+        public MainPagePageObject ClearingSearchField(string city)
         {
             WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
@@ -67,7 +69,7 @@ namespace ChoosingASityDNSPageTests.PageObjects
             return new MainPagePageObject(_webDriver);
         }
 
-        public MainPagePageObject closingPage()
+        public MainPagePageObject ClosingPage()
         {
             WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
@@ -75,6 +77,21 @@ namespace ChoosingASityDNSPageTests.PageObjects
             _webDriver.FindElement(_closePageButton).Click();
 
             return new MainPagePageObject(_webDriver);
+        }
+
+        public List<String> FindPopularCities()
+        {
+            WebDriverWait wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(30));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+
+            List<IWebElement> elementsCollection = _webDriver.FindElements(_listPopularCities).ToList();
+            List<String> elements = new List<String>();
+            foreach(IWebElement element in elementsCollection)
+            {
+                elements.Add(element.Text);
+            }
+
+            return elements;
         }
 
     }

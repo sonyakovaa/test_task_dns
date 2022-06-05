@@ -11,8 +11,7 @@ namespace ChoosingASityDNSPageTests.PageObjects
     {
         private IWebDriver _webDriver;
 
-        private readonly By _choosingCityButton = By.CssSelector(".city-select__text");
-        private readonly By _nameCity = By.CssSelector(".city-select__text");
+        private readonly By _cityButton = By.CssSelector(".city-select__text");
         private readonly By _choosingCityPage = By.CssSelector(".select-lists");
 
         public MainPagePageObject(IWebDriver webDriver)
@@ -20,20 +19,20 @@ namespace ChoosingASityDNSPageTests.PageObjects
             _webDriver = webDriver;
         }
 
-        public ChoosingACityPageObject choosingCity()
+        public ChoosingACityPageObject ChoosingCity()
         {
-            _webDriver.FindElement(_choosingCityButton).Click();
+            _webDriver.FindElement(_cityButton).Click();
 
             return new ChoosingACityPageObject(_webDriver);
         }
 
-        public string getCity()
+        public string GetCity()
         {
-            string nameCity = _webDriver.FindElement(_nameCity).Text;
+            string nameCity = _webDriver.FindElement(_cityButton).Text;
             return nameCity;
         }
 
-        public bool checkingCitySelectionPage()
+        public bool CheckingCitySelectionPage()
         {
             try
             {
