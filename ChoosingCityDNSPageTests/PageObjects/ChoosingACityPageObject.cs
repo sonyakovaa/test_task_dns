@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using SeleniumExtras.WaitHelpers;
 using System.Collections.ObjectModel;
 
-namespace ChoosingASityDNSPageTests.PageObjects
+namespace ChoosingCityDNSPageTests.PageObjects
 {
     // //div[text()="Ваш город"]
     // "//span[text()='Дальневосточный']"

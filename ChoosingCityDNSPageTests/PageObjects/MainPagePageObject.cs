@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 
-namespace ChoosingASityDNSPageTests.PageObjects
+namespace ChoosingCityDNSPageTests.PageObjects
 {
     class MainPagePageObject
     {

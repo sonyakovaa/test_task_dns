@@ -1,4 +1,4 @@
-﻿using ChoosingASityDNSPageTests.PageObjects;
+﻿using ChoosingCityDNSPageTests.PageObjects;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -10,8 +10,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ChoosingASityDNSPageTests
+namespace ChoosingCityDNSPageTests
 {
+    [Parallelizable]
     public class ChoosingACityPageTests
     {
         private IWebDriver _webDriver;
@@ -25,45 +26,46 @@ namespace ChoosingASityDNSPageTests
             _ = _webDriver.Manage().Timeouts().ImplicitWait;
         }
 
-        [Test]
-        public void SearchCityByPressSearchButtonTest()
+        private static IEnumerable<TestCaseData> TestCaseListCities()
         {
-            string expectedCity = "Новосибирск";
+            yield return new TestCaseData("Новосибирск");
+            yield return new TestCaseData("Москва");
+            yield return new TestCaseData("Энгельс");
+        }
 
+        [Test, TestCaseSource("TestCaseListCities")]
+        public void SearchCityByPressSearchButtonTest(String city)
+        {
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
                 .ChoosingCity()
-                .FindCityField(expectedCity);
+                .FindCityField(city);
 
             string actualCity = mainPage.GetCity();
 
-            Assert.AreEqual(expectedCity, actualCity);
+            Assert.AreEqual(city, actualCity);
         }
 
-        [Test]
-        public void SearchCityByPressEnterKeyTest()
+        [Test, TestCaseSource("TestCaseListCities")]
+        public void SearchCityByPressEnterKeyTest(String city)
         {
-            string expectedCity = "Новосибирск";
-
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
                 .ChoosingCity()
-                .FindCityPressEnter(expectedCity);
+                .FindCityPressEnter(city);
 
             string actualCity = mainPage.GetCity();
 
-            Assert.AreEqual(expectedCity, actualCity);
+            Assert.AreEqual(city, actualCity);
         }
 
-        [Test]
-        public void ClearingSearchFieldTest()
+        [Test, TestCaseSource("TestCaseListCities")]
+        public void ClearingSearchFieldTest(String city)
         {
-            string expectedCity = "Новосибирск";
-
             var mainPage = new MainPagePageObject(_webDriver);
             mainPage
                 .ChoosingCity()
-                .ClearingSearchField(expectedCity);
+                .ClearingSearchField(city);
         }
 
         [Test]
@@ -81,17 +83,17 @@ namespace ChoosingASityDNSPageTests
         public void ListPopularCitiesTest()
         {
             var mainPage = new MainPagePageObject(_webDriver);
-            List<String> actualSities = mainPage
+            List<String> actualCities = mainPage
                 .ChoosingCity()
                 .FindPopularCities();
 
-            actualSities.Sort();
+            actualCities.Sort();
 
-            List<String> expectedSities = new List<String>() {"Москва", "Санкт-Петербург", "Новосибирск", 
+            List<String> expectedCities = new List<String>() {"Москва", "Санкт-Петербург", "Новосибирск", 
                 "Екатеринбург", "Нижний Новгород", "Казань", 
                 "Самара", "Владивосток" };
-            expectedSities.Sort();
-            Assert.AreEqual(expectedSities, actualSities);
+            expectedCities.Sort();
+            Assert.AreEqual(expectedCities, actualCities);
         }
     }
 }
