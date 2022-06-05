@@ -15,11 +15,12 @@ namespace ChoosingCityDNSPageTests.PageObjects
     // //div[text()="Ваш город"]
     // "//span[text()='Дальневосточный']"
     // div[class="base-modal__header-content"] svg[class="base-modal__header-close-icon dns-icon_remove"]
+    // //ul[@class="cities"]/li[@class="modal-row"]/a[@href="javascript:"]/span[text()="Москва"]
     class ChoosingACityPageObject
     {
         private readonly IWebDriver _webDriver;
 
-        private readonly By _findDistrict = By.XPath("//span[text()='Дальневосточный']");
+        private readonly By _findListCities = By.CssSelector(".big-cities-bubble-list");
         private readonly By _findCityButton = By.CssSelector(".base-ui-input-search__input");
         private readonly By _performingCitySearchButton = By.CssSelector(".base-ui-input-search__icon" +
             ".base-ui-input-search__icon_search" +
@@ -29,6 +30,8 @@ namespace ChoosingCityDNSPageTests.PageObjects
         private readonly By _closePageButton = By.CssSelector("div[class='base-modal__header-content'] " +
             "svg[class='base-modal__header-close-icon dns-icon_remove']");
         private readonly By _listPopularCities = By.CssSelector(".city-bubble");
+        private readonly String _findDistrictAndRegion = "//span[text()='']";
+        private readonly String _findCity = "//ul[@class='cities']/li[@class='modal-row']/a[@href='javascript:']/span[text()='']";
 
         public ChoosingACityPageObject(IWebDriver webDriver)
         {
@@ -38,7 +41,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         public MainPagePageObject FindCityField(string city, IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
 
             webDriver.FindElement(_findCityButton).SendKeys(city);
             webDriver.FindElement(_performingCitySearchButton).Click();
@@ -49,7 +52,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         public MainPagePageObject FindCityPressEnter(string city, IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
             Actions actions = new Actions(webDriver);
 
             webDriver.FindElement(_findCityButton).SendKeys(city);
@@ -61,7 +64,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         public MainPagePageObject ClearingSearchField(string city, IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
 
             webDriver.FindElement(_findCityButton).SendKeys(city);
             webDriver.FindElement(_clearFieldButton).Click();
@@ -72,7 +75,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         public MainPagePageObject ClosingPage(IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
 
             webDriver.FindElement(_closePageButton).Click();
 
@@ -82,7 +85,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         public List<String> FindPopularCities(IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findDistrict));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
 
             List<IWebElement> elementsCollection = webDriver.FindElements(_listPopularCities).ToList();
             List<String> elements = new List<String>();
@@ -92,6 +95,20 @@ namespace ChoosingCityDNSPageTests.PageObjects
             }
 
             return elements;
+        }
+
+        public MainPagePageObject SelectCityFromList (String district, String region, String city, IWebDriver webDriver)
+        {
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
+            Actions actions = new Actions(webDriver);
+
+            String lineIndexOf = "text()=";
+            webDriver.FindElement(By.XPath(_findDistrictAndRegion.Insert(_findDistrictAndRegion.IndexOf("'") + 1, district))).Click();
+            webDriver.FindElement(By.XPath(_findDistrictAndRegion.Insert(_findDistrictAndRegion.IndexOf("'") + 1, region))).Click();
+            webDriver.FindElement(By.XPath(_findCity.Insert(_findCity.IndexOf(lineIndexOf) + 8, city))).Click();
+
+            return new MainPagePageObject(webDriver);
         }
 
     }

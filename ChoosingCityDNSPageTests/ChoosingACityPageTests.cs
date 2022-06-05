@@ -23,6 +23,13 @@ namespace ChoosingCityDNSPageTests
             yield return new TestCaseData("Энгельс");
         }
 
+        private static IEnumerable<TestCaseData> TestCaseListPlaces()
+        {
+            yield return new TestCaseData("Северо-Кавказский", "Республика Дагестан", "Дербент");
+            yield return new TestCaseData("Уральский", "Челябинская область", "Миасс");
+            yield return new TestCaseData("Центральный", "Город Москва", "Москва");
+        }
+
         private IWebDriver CreateLocalWebDriver()
         {
             IWebDriver webDriverTest = new ChromeDriver();
@@ -108,6 +115,22 @@ namespace ChoosingCityDNSPageTests
                 "Самара", "Владивосток" };
             expectedCities.Sort();
             Assert.AreEqual(expectedCities, actualCities);
+        }
+
+        [Test, TestCaseSource("TestCaseListPlaces")]
+        public void SelectCityFromListTest(String district, String region, String city)
+        {
+            IWebDriver webDriverTest = CreateLocalWebDriver();
+            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+
+            var mainPage = new MainPagePageObject(webDriverTest);
+            mainPage
+                .ChoosingCity(webDriverTest)
+                .SelectCityFromList(district, region, city, webDriverTest);
+                
+            string actualCity = mainPage.GetCity(webDriverTest);
+
+            Assert.AreEqual(city, actualCity);
         }
 
 
