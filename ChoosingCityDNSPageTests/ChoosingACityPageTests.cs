@@ -30,6 +30,20 @@ namespace ChoosingCityDNSPageTests
             yield return new TestCaseData("Центральный", "Город Москва", "Москва");
         }
 
+        private static IEnumerable<TestCaseData> TestCaseListPopularCities()
+        {
+            yield return new TestCaseData(new List<String>() {"Москва", "Санкт-Петербург", "Новосибирск",
+                "Екатеринбург", "Нижний Новгород", "Казань",
+                "Самара", "Владивосток"});
+        }
+
+        private static IEnumerable<TestCaseData> TestCaseListDistricts()
+        {
+            yield return new TestCaseData(new List<String>() {"Дальневосточный", "Приволжский", "Северо-Западный", 
+                "Северо-Кавказский", "Сибирский", "Уральский", 
+                "Центральный", "Южный"});
+        }
+
         private IWebDriver CreateLocalWebDriver()
         {
             IWebDriver webDriverTest = new ChromeDriver();
@@ -40,7 +54,7 @@ namespace ChoosingCityDNSPageTests
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
-        public void SearchCityByPressSearchButtonTest(String city)
+        public void SearchCityByPressSearchButtonTest(String expectedcity)
         {
             IWebDriver webDriverTest = CreateLocalWebDriver();
             _ = webDriverTest.Manage().Timeouts().ImplicitWait;
@@ -48,15 +62,15 @@ namespace ChoosingCityDNSPageTests
             var mainPage = new MainPagePageObject(webDriverTest);
             mainPage
                 .ChoosingCity(webDriverTest)
-                .FindCityField(city, webDriverTest);
+                .FindCityField(expectedcity, webDriverTest);
 
             string actualCity = mainPage.GetCity(webDriverTest);
 
-            Assert.AreEqual(city, actualCity);
+            Assert.AreEqual(expectedcity, actualCity);
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
-        public void SearchCityByPressEnterKeyTest(String city)
+        public void SearchCityByPressEnterKeyTest(String expectedcity)
         {
             IWebDriver webDriverTest = CreateLocalWebDriver();
             _ = webDriverTest.Manage().Timeouts().ImplicitWait;
@@ -64,15 +78,15 @@ namespace ChoosingCityDNSPageTests
             var mainPage = new MainPagePageObject(webDriverTest);
             mainPage
                 .ChoosingCity(webDriverTest)
-                .FindCityPressEnter(city, webDriverTest);
+                .FindCityPressEnter(expectedcity, webDriverTest);
 
             string actualCity = mainPage.GetCity(webDriverTest);
 
-            Assert.AreEqual(city, actualCity);
+            Assert.AreEqual(expectedcity, actualCity);
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
-        public void ClearingSearchFieldTest(String city)
+        public void ClearingSearchFieldTest(String expectedcity)
         {
             IWebDriver webDriverTest = CreateLocalWebDriver();
             _ = webDriverTest.Manage().Timeouts().ImplicitWait;
@@ -80,7 +94,7 @@ namespace ChoosingCityDNSPageTests
             var mainPage = new MainPagePageObject(webDriverTest);
             mainPage
                 .ChoosingCity(webDriverTest)
-                .ClearingSearchField(city, webDriverTest);
+                .ClearingSearchField(expectedcity, webDriverTest);
         }
 
         [Test]
@@ -97,28 +111,25 @@ namespace ChoosingCityDNSPageTests
             Assert.IsFalse(mainPage.CheckingCitySelectionPage(webDriverTest));
         }
 
-        [Test]
-        public void ListPopularCitiesTest()
+        [Test, TestCaseSource("TestCaseListPopularCities")]
+        public void ListPopularCitiesTest(List<String> expectedPopularCities)
         {
             IWebDriver webDriverTest = CreateLocalWebDriver();
             _ = webDriverTest.Manage().Timeouts().ImplicitWait;
 
             var mainPage = new MainPagePageObject(webDriverTest);
-            List<String> actualCities = mainPage
+            List<String> actualPopularCities = mainPage
                 .ChoosingCity(webDriverTest)
                 .FindPopularCities(webDriverTest);
 
-            actualCities.Sort();
+            actualPopularCities.Sort();
+            expectedPopularCities.Sort();
 
-            List<String> expectedCities = new List<String>() {"Москва", "Санкт-Петербург", "Новосибирск",
-                "Екатеринбург", "Нижний Новгород", "Казань",
-                "Самара", "Владивосток" };
-            expectedCities.Sort();
-            Assert.AreEqual(expectedCities, actualCities);
+            Assert.AreEqual(expectedPopularCities, actualPopularCities);
         }
 
         [Test, TestCaseSource("TestCaseListPlaces")]
-        public void SelectCityFromListTest(String district, String region, String city)
+        public void SelectCityFromListTest(String expectedDistrict, String expectedRegion, String expectedCity)
         {
             IWebDriver webDriverTest = CreateLocalWebDriver();
             _ = webDriverTest.Manage().Timeouts().ImplicitWait;
@@ -126,13 +137,28 @@ namespace ChoosingCityDNSPageTests
             var mainPage = new MainPagePageObject(webDriverTest);
             mainPage
                 .ChoosingCity(webDriverTest)
-                .SelectCityFromList(district, region, city, webDriverTest);
-                
+                .SelectCityFromList(expectedDistrict, expectedRegion, expectedCity, webDriverTest);
+
             string actualCity = mainPage.GetCity(webDriverTest);
 
-            Assert.AreEqual(city, actualCity);
+            Assert.AreEqual(expectedCity, actualCity);
         }
 
+        [Test, TestCaseSource("TestCaseListDistricts")]
+        public void ListDistrictsTest(List<String> expectedDistricts)
+        {
+            IWebDriver webDriverTest = CreateLocalWebDriver();
+            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
 
+            var mainPage = new MainPagePageObject(webDriverTest);
+            List<String> actualDistricts = mainPage
+                .ChoosingCity(webDriverTest)
+                .FindDistricts(webDriverTest);
+
+            actualDistricts.Sort();
+            expectedDistricts.Sort();
+
+            Assert.AreEqual(expectedDistricts, actualDistricts);
+        }
     }
 }

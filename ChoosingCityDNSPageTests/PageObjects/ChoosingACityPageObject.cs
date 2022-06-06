@@ -32,6 +32,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
         private readonly By _listPopularCities = By.CssSelector(".city-bubble");
         private readonly String _findDistrictAndRegion = "//span[text()='']";
         private readonly String _findCity = "//ul[@class='cities']/li[@class='modal-row']/a[@href='javascript:']/span[text()='']";
+        private readonly By _findDistricts = By.CssSelector(".districts .modal-row");
 
         public ChoosingACityPageObject(IWebDriver webDriver)
         {
@@ -89,7 +90,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
 
             List<IWebElement> elementsCollection = webDriver.FindElements(_listPopularCities).ToList();
             List<String> elements = new List<String>();
-            foreach(IWebElement element in elementsCollection)
+            foreach (IWebElement element in elementsCollection)
             {
                 elements.Add(element.Text);
             }
@@ -97,7 +98,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
             return elements;
         }
 
-        public MainPagePageObject SelectCityFromList (String district, String region, String city, IWebDriver webDriver)
+        public MainPagePageObject SelectCityFromList(String district, String region, String city, IWebDriver webDriver)
         {
             WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
@@ -109,6 +110,21 @@ namespace ChoosingCityDNSPageTests.PageObjects
             webDriver.FindElement(By.XPath(_findCity.Insert(_findCity.IndexOf(lineIndexOf) + 8, city))).Click();
 
             return new MainPagePageObject(webDriver);
+        }
+
+        public List<String> FindDistricts(IWebDriver webDriver)
+        {
+            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_findListCities));
+
+            List<IWebElement> elementsCollection = webDriver.FindElements(_findDistricts).ToList();
+            List<String> elements = new List<String>();
+            foreach (IWebElement element in elementsCollection)
+            {
+                elements.Add(element.Text);
+            }
+
+            return elements;
         }
 
     }
