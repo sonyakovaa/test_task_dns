@@ -16,6 +16,20 @@ namespace ChoosingCityDNSPageTests
     [Parallelizable(ParallelScope.All)]
     public class ChoosingACityPageTests
     {
+        ThreadLocal<IWebDriver> webDriverTest = new ThreadLocal<IWebDriver>();
+
+        [SetUp]
+        public void Init()
+        {
+            var options = new ChromeOptions();
+            options.AddArgument("-no-sandbox");
+
+            webDriverTest.Value = new ChromeDriver(ChromeDriverService.CreateDefaultService(), options, TimeSpan.FromMinutes(3));
+            // webDriver.Manage().Timeouts().PageLoad.Add(TimeSpan.FromSeconds(30));
+            webDriverTest.Value.Navigate().GoToUrl("https://www.dns-shop.ru/");
+            webDriverTest.Value.Manage().Window.Maximize();
+        }
+
         private static IEnumerable<TestCaseData> TestCaseListCities()
         {
             yield return new TestCaseData("Новосибирск");
@@ -46,84 +60,75 @@ namespace ChoosingCityDNSPageTests
 
         private static IEnumerable<TestCaseData> TestCaseListDistricts()
         {
-            yield return new TestCaseData(new List<String>() {"Дальневосточный", "Приволжский", "Северо-Западный", 
-                "Северо-Кавказский", "Сибирский", "Уральский", 
+            yield return new TestCaseData(new List<String>() {"Дальневосточный", "Приволжский", "Северо-Западный",
+                "Северо-Кавказский", "Сибирский", "Уральский",
                 "Центральный", "Южный"});
-        }
-
-        private IWebDriver CreateLocalWebDriver()
-        {
-            IWebDriver webDriverTest = new ChromeDriver();
-            webDriverTest.Navigate().GoToUrl("https://www.dns-shop.ru/");
-            webDriverTest.Manage().Window.Maximize();
-
-            return webDriverTest;
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
         public void SearchCityByPressSearchButtonTest(String expectedcity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .FindCityField(expectedcity, webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .EnterCityInSearchFieldAndPressSearchButton(expectedcity, webDriverTest.Value);
 
-            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest.Value));
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
         public void SearchCityByPressEnterKeyTest(String expectedcity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver(); 
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .FindCityPressEnter(expectedcity, webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .EnterCityInSearchFieldAndPressEnter(expectedcity, webDriverTest.Value);
 
-            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest.Value));
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
-        public void ClearingSearchFieldTest(String expectedcity)
+        public void ClearSearchFieldByPressClearButtonTest(String expectedcity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .ClearingSearchField(expectedcity, webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .ClearSearchFieldByPressClearButton(expectedcity, webDriverTest.Value);
         }
 
         [Test]
-        public void ClosingPageTest()
+        public void ClosingCitySelectionPageTest()
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .ClosingPage(webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .CloseCitySelectionPage(webDriverTest.Value);
 
-            Assert.IsFalse(mainPage.CheckingCitySelectionPage(webDriverTest));
+            Assert.IsFalse(mainPage.CheckingOpenCitySelectPage(webDriverTest.Value));
         }
 
         [Test, TestCaseSource("TestCaseListPopularCities")]
-        public void ListPopularCitiesTest(List<String> expectedPopularCities)
+        public void SearchPopularCitiesOnCitySelectionPageTest(List<String> expectedPopularCities)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             List<String> actualPopularCities = mainPage
-                .ChoosingCity(webDriverTest)
-                .FindPopularCities(webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .SearchPopularCitiesOnCitySelectionPage(webDriverTest.Value);
 
             actualPopularCities.Sort();
             expectedPopularCities.Sort();
@@ -132,29 +137,29 @@ namespace ChoosingCityDNSPageTests
         }
 
         [Test, TestCaseSource("TestCaseListPlaces")]
-        public void SelectCityFromListTest(String expectedDistrict, String expectedRegion, String expectedCity)
+        public void SelectCityUsingListTest(String expectedDistrict, String expectedRegion, String expectedCity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .SelectCityFromList(expectedDistrict, expectedRegion, expectedCity, webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .SelectCityUsingList(expectedDistrict, expectedRegion, expectedCity, webDriverTest.Value);
 
-            Assert.AreEqual(expectedCity, mainPage.GetCity(webDriverTest));
+            Assert.AreEqual(expectedCity, mainPage.GetCity(webDriverTest.Value));
         }
 
         [Test, TestCaseSource("TestCaseListDistricts")]
-        public void ListDistrictsTest(List<String> expectedDistricts)
+        public void FindDistrictsTest(List<String> expectedDistricts)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             List<String> actualDistricts = mainPage
-                .ChoosingCity(webDriverTest)
-                .FindDistricts(webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .FindDistricts(webDriverTest.Value);
 
             actualDistricts.Sort();
             expectedDistricts.Sort();
@@ -165,31 +170,37 @@ namespace ChoosingCityDNSPageTests
         [Test, TestCaseSource("TestCaseListCookieCities")]
         public void CityCookieTest(String expectedCity, String expectedCookieCity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
-            mainPage
-                .ChoosingCity(webDriverTest)
-                .FindCityField(expectedCity, webDriverTest);
+            var actualCookieCity = new MainPagePageObject(webDriverTest.Value)
+                .OpenCitySelectPage(webDriverTest.Value)
+                .EnterCityInSearchFieldAndPressSearchButton(expectedCity, webDriverTest.Value)
+                .GetCityCookie(webDriverTest.Value);
 
-            Assert.AreEqual(expectedCookieCity, mainPage.GetCityCookie(webDriverTest));
+            Assert.AreEqual(expectedCookieCity, actualCookieCity);
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
         public void CityAfterSearchAndPageRefreshTest(String expectedcity)
         {
-            IWebDriver webDriverTest = CreateLocalWebDriver();
-            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+            // IWebDriver webDriverTest = LocalWebDriver.CreateLocalWebDriver();
+            _ = webDriverTest.Value.Manage().Timeouts().ImplicitWait;
 
-            var mainPage = new MainPagePageObject(webDriverTest);
+            var mainPage = new MainPagePageObject(webDriverTest.Value);
             mainPage
-                .ChoosingCity(webDriverTest)
-                .FindCityField(expectedcity, webDriverTest);
+                .OpenCitySelectPage(webDriverTest.Value)
+                .EnterCityInSearchFieldAndPressSearchButton(expectedcity, webDriverTest.Value);
 
-            webDriverTest.Navigate().Refresh();
+            webDriverTest.Value.Navigate().Refresh();
 
-            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest.Value));
+        }
+
+        [TearDown]
+        public void Cleanup()
+        {
+            webDriverTest.Value.Quit();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -21,11 +22,9 @@ namespace ChoosingCityDNSPageTests.PageObjects
             _webDriver = webDriver;
         }
 
-        public ChoosingACityPageObject ChoosingCity(IWebDriver webDriver)
+        public ChoosingACityPageObject OpenCitySelectPage(IWebDriver webDriver)
         {
-            WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_cityButton));
-
+            WaitUntil.WaitElement(webDriver, _cityButton);
             webDriver.FindElement(_cityButton).Click();
 
             return new ChoosingACityPageObject(webDriver);
@@ -33,17 +32,17 @@ namespace ChoosingCityDNSPageTests.PageObjects
 
         public string GetCity(IWebDriver webDriver)
         {
+            WaitUntil.WaitElement(webDriver, _cityButton);
             string nameCity = webDriver.FindElement(_cityButton).Text;
+
             return nameCity;
         }
 
-        public bool CheckingCitySelectionPage(IWebDriver webDriver)
+        public bool CheckingOpenCitySelectPage(IWebDriver webDriver)
         {
             try
             {
-                WebDriverWait wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(120));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(_cityButton));
-
+                WaitUntil.WaitElement(webDriver, _cityButton);
                 webDriver.FindElement(_choosingCityPage);
 
                 return true;
@@ -56,10 +55,11 @@ namespace ChoosingCityDNSPageTests.PageObjects
 
         public String GetCityCookie(IWebDriver webDriver)
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(3000);
 
             String cookies = webDriver.Manage().Cookies.GetCookieNamed("city_path").ToString();
             String cookieCity = cookies.Remove(cookies.IndexOf(";")).Substring(10);
+
             return cookieCity;
         }
     }
