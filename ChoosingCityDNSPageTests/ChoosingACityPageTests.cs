@@ -23,6 +23,13 @@ namespace ChoosingCityDNSPageTests
             yield return new TestCaseData("Энгельс");
         }
 
+        private static IEnumerable<TestCaseData> TestCaseListCookieCities()
+        {
+            yield return new TestCaseData("Новосибирск", "novosibirsk");
+            yield return new TestCaseData("Москва", "moscow");
+            yield return new TestCaseData("Энгельс", "engels");
+        }
+
         private static IEnumerable<TestCaseData> TestCaseListPlaces()
         {
             yield return new TestCaseData("Северо-Кавказский", "Республика Дагестан", "Дербент");
@@ -64,9 +71,7 @@ namespace ChoosingCityDNSPageTests
                 .ChoosingCity(webDriverTest)
                 .FindCityField(expectedcity, webDriverTest);
 
-            string actualCity = mainPage.GetCity(webDriverTest);
-
-            Assert.AreEqual(expectedcity, actualCity);
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
@@ -80,9 +85,7 @@ namespace ChoosingCityDNSPageTests
                 .ChoosingCity(webDriverTest)
                 .FindCityPressEnter(expectedcity, webDriverTest);
 
-            string actualCity = mainPage.GetCity(webDriverTest);
-
-            Assert.AreEqual(expectedcity, actualCity);
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
         }
 
         [Test, TestCaseSource("TestCaseListCities")]
@@ -139,9 +142,7 @@ namespace ChoosingCityDNSPageTests
                 .ChoosingCity(webDriverTest)
                 .SelectCityFromList(expectedDistrict, expectedRegion, expectedCity, webDriverTest);
 
-            string actualCity = mainPage.GetCity(webDriverTest);
-
-            Assert.AreEqual(expectedCity, actualCity);
+            Assert.AreEqual(expectedCity, mainPage.GetCity(webDriverTest));
         }
 
         [Test, TestCaseSource("TestCaseListDistricts")]
@@ -159,6 +160,36 @@ namespace ChoosingCityDNSPageTests
             expectedDistricts.Sort();
 
             Assert.AreEqual(expectedDistricts, actualDistricts);
+        }
+
+        [Test, TestCaseSource("TestCaseListCookieCities")]
+        public void CityCookieTest(String expectedCity, String expectedCookieCity)
+        {
+            IWebDriver webDriverTest = CreateLocalWebDriver();
+            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+
+            var mainPage = new MainPagePageObject(webDriverTest);
+            mainPage
+                .ChoosingCity(webDriverTest)
+                .FindCityField(expectedCity, webDriverTest);
+
+            Assert.AreEqual(expectedCookieCity, mainPage.GetCityCookie(webDriverTest));
+        }
+
+        [Test, TestCaseSource("TestCaseListCities")]
+        public void CityAfterSearchAndPageRefreshTest(String expectedcity)
+        {
+            IWebDriver webDriverTest = CreateLocalWebDriver();
+            _ = webDriverTest.Manage().Timeouts().ImplicitWait;
+
+            var mainPage = new MainPagePageObject(webDriverTest);
+            mainPage
+                .ChoosingCity(webDriverTest)
+                .FindCityField(expectedcity, webDriverTest);
+
+            webDriverTest.Navigate().Refresh();
+
+            Assert.AreEqual(expectedcity, mainPage.GetCity(webDriverTest));
         }
     }
 }

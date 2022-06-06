@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -51,7 +52,15 @@ namespace ChoosingCityDNSPageTests.PageObjects
             {
                 return false;
             }
+        }
 
+        public String GetCityCookie(IWebDriver webDriver)
+        {
+            Thread.Sleep(1000);
+
+            String cookies = webDriver.Manage().Cookies.GetCookieNamed("city_path").ToString();
+            String cookieCity = cookies.Remove(cookies.IndexOf(";")).Substring(10);
+            return cookieCity;
         }
     }
 }
