@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace ChoosingCityDNSPageTests
 {
-    // [Parallelizable(ParallelScope.All)]
+    [Parallelizable(ParallelScope.All)]
     public class ChoosingACityPageTests
     {
         ThreadLocal<IWebDriver> webDriverTest = new ThreadLocal<IWebDriver>();
@@ -154,11 +154,9 @@ namespace ChoosingCityDNSPageTests
         [TearDown]
         public void Cleanup()
         {
-            if (webDriverTest.Value != null)
-            {
-                webDriverTest.Value.Quit();
-                webDriverTest.Value = null;
-            }
+            webDriverTest.Value.Close();
+            webDriverTest.Value.Quit();
+            webDriverTest.Value = null;
         }
     }
 }

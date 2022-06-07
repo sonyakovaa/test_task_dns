@@ -27,8 +27,21 @@ namespace ChoosingCityDNSPageTests.PageObjects
 
         public string GetCity(IWebDriver webDriver)
         {
-            WaitUntil.WaitElement(webDriver, _cityButton);
-            string nameCity = webDriver.FindElement(_cityButton).Text;
+            string nameCity = "";
+            for (int i = 0; i <= 1; i++)
+            {
+                // Элемент почему-то исчезает, поэтому ищем его дважды
+                try
+                {
+                    WaitUntil.WaitElement(webDriver, _cityButton);
+                    nameCity = webDriver.FindElement(_cityButton).Text;
+                    break;
+                }
+                catch (StaleElementReferenceException)
+                {
+                    
+                }
+            }
 
             return nameCity;
         }
