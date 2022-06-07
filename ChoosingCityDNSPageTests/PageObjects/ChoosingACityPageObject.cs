@@ -1,21 +1,12 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using SeleniumExtras.WaitHelpers;
-using System.Collections.ObjectModel;
 
 namespace ChoosingCityDNSPageTests.PageObjects
 {
-    // //div[text()="Ваш город"]
-    // "//span[text()='Дальневосточный']"
-    // div[class="base-modal__header-content"] svg[class="base-modal__header-close-icon dns-icon_remove"]
-    // //ul[@class="cities"]/li[@class="modal-row"]/a[@href="javascript:"]/span[text()="Москва"]
+
     class ChoosingACityPageObject
     {
         private readonly IWebDriver _webDriver;
@@ -100,7 +91,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
             String lineIndexOf = "text()=";
             webDriver.FindElement(By.XPath(_findDistrictAndRegion.Insert(_findDistrictAndRegion.IndexOf("'") + 1, district))).Click();
             webDriver.FindElement(By.XPath(_findDistrictAndRegion.Insert(_findDistrictAndRegion.IndexOf("'") + 1, region))).Click();
-            webDriver.FindElement(By.XPath(_findCity.Insert(_findCity.IndexOf(lineIndexOf) + 8, city))).Click();
+            webDriver.FindElement(By.XPath(_findCity.Insert(_findCity.IndexOf(lineIndexOf) + lineIndexOf.Length + 1, city))).Click();
 
             return new MainPagePageObject(webDriver);
         }

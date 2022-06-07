@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 
 namespace ChoosingCityDNSPageTests.PageObjects
 {
@@ -58,7 +53,7 @@ namespace ChoosingCityDNSPageTests.PageObjects
             Thread.Sleep(3000);
 
             String cookies = webDriver.Manage().Cookies.GetCookieNamed("city_path").ToString();
-            String cookieCity = cookies.Remove(cookies.IndexOf(";")).Substring(10);
+            string cookieCity = cookies.Remove(cookies.IndexOf(";")).Substring(10);
 
             return cookieCity;
         }
